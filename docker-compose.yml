@@ -1,0 +1,36 @@
+version: '3'
+services:
+  web:
+    image: stones_web
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./stones_web:/opt/app
+    command: python start.py
+    env_file:
+      - .env
+    build:
+      context: ./stones_web
+    depends_on:
+      - postgres
+  
+  ui:
+    image: stones_ui
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./stones_ui:/opt/app
+      - ./stones_ui/node_modules
+    build:
+      context: ./stones_ui
+
+  postgres:
+    image: postgres:latest
+    container_name: postgres
+    environment:
+      - POSTGRES_USER=brick
+      - POSTGRES_PASSWORD=12345
+      - POSTGRES_DB=stone
+    ports:
+      - "5432:5432"
+    restart: always
